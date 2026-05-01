@@ -1,6 +1,8 @@
 require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
 const cron = require('node-cron');
+const express = require('express');
+const app = express();
 
 // Bot erstellen
 const client = new Client({
@@ -64,3 +66,12 @@ client.once('ready', () => {
 
 // Login
 client.login(process.env.TOKEN);
+app.get('/', (req, res) => {
+  res.send('Bot is running');
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`🌐 Webserver läuft auf Port ${PORT}`);
+});
