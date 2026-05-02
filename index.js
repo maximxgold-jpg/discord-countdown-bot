@@ -5,15 +5,12 @@ const express = require('express');
 
 const app = express();
 
-// 🤖 Bot erstellen
 const client = new Client({
   intents: [GatewayIntentBits.Guilds]
 });
 
-// 📅 DEIN EVENT DATUM
 const eventDate = new Date("2026-08-09");
 
-// 🔢 Tage berechnen
 function getDaysLeft() {
   const now = new Date();
   now.setHours(0, 0, 0, 0);
@@ -22,7 +19,6 @@ function getDaysLeft() {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-// 📩 Nachricht senden
 async function sendCountdown() {
   try {
     const channel = await client.channels.fetch(process.env.CHANNEL_ID);
@@ -48,29 +44,23 @@ async function sendCountdown() {
   }
 }
 
-// ✅ Bot ist bereit
 client.once('clientReady', () => {
   console.log(`🤖 Eingeloggt als ${client.user.tag}`);
 
-  // ⏰ Täglich um 9:00
   cron.schedule('0 9 * * *', () => {
     console.log("⏰ Countdown wird gesendet...");
     sendCountdown();
   });
 
-  // Test beim Start
   sendCountdown();
 });
 
-// 🔐 Login
 client.login(process.env.TOKEN);
 
-// 🌐 Express Webserver (für Render wichtig!)
 app.get('/', (req, res) => {
   res.send('Bot is running');
 });
 
-// ⚠️ WICHTIG: Render Port Fix
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
