@@ -2,23 +2,22 @@ require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
 const cron = require('node-cron');
 const express = require('express');
+
 const app = express();
 
-// Bot erstellen
+// 🤖 Bot erstellen
 const client = new Client({
   intents: [GatewayIntentBits.Guilds]
 });
 
-// 📅 HIER DEIN EVENT DATUM
+// 📅 DEIN EVENT DATUM
 const eventDate = new Date("2026-08-09");
 
 // 🔢 Tage berechnen
 function getDaysLeft() {
   const now = new Date();
-  
-  // Wichtig: Zeit auf 00:00 setzen (sonst falsche Tage)
-  now.setHours(0,0,0,0);
-  
+  now.setHours(0, 0, 0, 0);
+
   const diffTime = eventDate - now;
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
@@ -27,7 +26,6 @@ function getDaysLeft() {
 async function sendCountdown() {
   try {
     const channel = await client.channels.fetch(process.env.CHANNEL_ID);
-    
     const days = getDaysLeft();
 
     let message;
@@ -50,8 +48,8 @@ async function sendCountdown() {
   }
 }
 
-// Wenn Bot bereit ist
-client.once('ready', () => {
+// ✅ Bot ist bereit
+client.once('clientReady', () => {
   console.log(`🤖 Eingeloggt als ${client.user.tag}`);
 
   // ⏰ Täglich um 9:00
@@ -60,18 +58,22 @@ client.once('ready', () => {
     sendCountdown();
   });
 
-  // Optional: direkt beim Start testen
+  // Test beim Start
   sendCountdown();
 });
 
-// Login
+// 🔐 Login
 client.login(process.env.TOKEN);
+
+// 🌐 Express Webserver (für Render wichtig!)
 app.get('/', (req, res) => {
   res.send('Bot is running');
 });
 
+// ⚠️ WICHTIG: Render Port Fix
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`🌐 Webserver läuft auf Port ${PORT}`);
+});
 });
